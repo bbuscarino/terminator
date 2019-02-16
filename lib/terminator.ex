@@ -33,6 +33,7 @@ defmodule Terminator do
     * `Terminator.has_role/1` - Requires single role to be present on performer
 
   """
+  @repo Application.get_env(:terminator, :repo, Terminator.Repo)
 
   defmacro __using__(_) do
     quote do
@@ -370,14 +371,14 @@ defmodule Terminator do
   @doc false
   @spec load_and_store_performer!(integer()) :: {:ok, Terminator.Performer.t()}
   def load_and_store_performer!(performer_id) do
-    performer = Terminator.Repo.get!(Terminator.Performer, performer_id)
+    performer = @repo.get!(Terminator.Performer, performer_id)
     store_performer!(performer)
   end
 
   @doc false
   @spec load_performer_roles(Terminator.Performer.t()) :: Terminator.Performer.t()
   def load_performer_roles(performer) do
-    performer |> Terminator.Repo.preload([:roles])
+    performer |> @repo.preload([:roles])
   end
 
   @doc false

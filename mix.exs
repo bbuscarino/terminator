@@ -55,7 +55,7 @@ defmodule Terminator.MixProject do
   defp package() do
     [
       files: ~w(lib priv/repo/migrations .formatter.exs mix.exs README*),
-      licenses: ["GPL"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/MilosMosovsky/terminator"}
     ]
   end

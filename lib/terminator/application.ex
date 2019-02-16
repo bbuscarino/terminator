@@ -15,10 +15,10 @@ defmodule Terminator.Application do
     Supervisor.start_link(children, opts)
   end
 
-  defp load_repos do
-    case Application.get_env(:terminator, :ecto_repos) do
-      nil -> [Terminator.Repo]
-      repos -> repos
+  defp load_repos() do
+    case Application.get_env(:terminator, :repo) do
+      Terminator.Repo -> [Terminator.Repo]
+      _ -> []
     end
   end
 end

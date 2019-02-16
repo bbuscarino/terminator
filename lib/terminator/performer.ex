@@ -12,10 +12,11 @@ defmodule Terminator.Performer do
 
   alias __MODULE__
   alias Terminator.Ability
-  alias Terminator.Repo
   alias Terminator.Role
   alias Terminator.PerformersEntities
   alias Terminator.PerformersRoles
+
+  @repo Application.get_env(:terminator, :repo, Terminator.Repo)
 
   @typedoc "A performer struct"
   @type t :: %Performer{}
@@ -56,7 +57,7 @@ defmodule Terminator.Performer do
   @spec grant(Performer.t(), Ability.t() | Role.t()) :: Performer.t()
   def grant(%Performer{id: id} = _performer, %Role{id: _id} = role) do
     # Preload performer roles
-    performer = Performer |> Repo.get!(id) |> Repo.preload([:roles])
+    performer = Performer |> @repo.get!(id) |> @repo.preload([:roles])
 
     roles = merge_uniq_grants(performer.roles ++ [role])
 
@@ -64,7 +65,7 @@ defmodule Terminator.Performer do
       changeset(performer)
       |> put_assoc(:roles, roles)
 
-    changeset |> Repo.update!()
+    changeset |> @repo.update!()
   end
 
   def grant(%{performer: %Performer{id: _pid} = performer}, %Role{id: _id} = role) do
@@ -72,28 +73,28 @@ defmodule Terminator.Performer do
   end
 
   def grant(%{performer_id: id}, %Role{id: _id} = role) do
-    performer = Performer |> Repo.get!(id)
+    performer = Performer |> @repo.get!(id)
     grant(performer, role)
   end
 
   def grant(%Performer{id: id} = _performer, %Ability{id: _id} = ability) do
-    performer = Performer |> Repo.get!(id)
+    performer = Performer |> @repo.get!(id)
     abilities = Enum.uniq(performer.abilities ++ [ability.identifier])
 
     changeset =
       changeset(performer)
       |> put_change(:abilities, abilities)
 
-    changeset |> Repo.update!()
+    changeset |> @repo.update!()
   end
 
   def grant(%{performer: %Performer{id: id}}, %Ability{id: _id} = ability) do
-    performer = Performer |> Repo.get!(id)
+    performer = Performer |> @repo.get!(id)
     grant(performer, ability)
   end
 
   def grant(%{performer_id: id}, %Ability{id: _id} = ability) do
-    performer = Performer |> Repo.get!(id)
+    performer = Performer |> @repo.get!(id)
     grant(performer, ability)
   end
 
@@ -115,7 +116,7 @@ defmodule Terminator.Performer do
 
         PerformersEntities.changeset(entity)
         |> put_change(:abilities, abilities)
-        |> Repo.update!()
+        |> @repo.update!()
     end
 
     performer
@@ -160,7 +161,7 @@ defmodule Terminator.Performer do
   def revoke(%Performer{id: id} = _performer, %Role{id: _id} = role) do
     from(pa in PerformersRoles)
     |> where([pr], pr.performer_id == ^id and pr.role_id == ^role.id)
-    |> Repo.delete_all()
+    |> @repo.delete_all()
   end
 
   def revoke(%{performer: %Performer{id: _pid} = performer}, %Role{id: _id} = role) do
@@ -172,7 +173,7 @@ defmodule Terminator.Performer do
   end
 
   def revoke(%Performer{id: id} = _performer, %Ability{id: _id} = ability) do
-    performer = Performer |> Repo.get!(id)
+    performer = Performer |> @repo.get!(id)
 
     abilities =
       Enum.filter(performer.abilities, fn grant ->
@@ -183,7 +184,7 @@ defmodule Terminator.Performer do
       changeset(performer)
       |> put_change(:abilities, abilities)
 
-    changeset |> Repo.update!()
+    changeset |> @repo.update!()
   end
 
   def revoke(
@@ -217,11 +218,11 @@ defmodule Terminator.Performer do
           end)
 
         if length(abilities) == 0 do
-          entity |> Repo.delete!()
+          entity |> @repo.delete!()
         else
           PerformersEntities.changeset(entity)
           |> put_change(:abilities, abilities)
-          |> Repo.update!()
+          |> @repo.update!()
         end
 
         performer
@@ -253,7 +254,7 @@ defmodule Terminator.Performer do
       e.performer_id == ^performer.id and e.assoc_id == ^entity_id and
         e.assoc_type == ^PerformersEntities.normalize_struct_name(entity_name)
     )
-    |> Repo.one()
+    |> @repo.one()
   end
 
   def table, do: :terminator_performers

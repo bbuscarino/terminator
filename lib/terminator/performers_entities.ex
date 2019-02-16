@@ -5,6 +5,8 @@ defmodule Terminator.PerformersEntities do
   import Ecto.Changeset
   alias __MODULE__
 
+  @repo Application.get_env(:terminator, :repo, Terminator.Repo)
+
   schema "terminator_performers_entities" do
     belongs_to(:performer, Terminator.Performer)
     field(:assoc_id, :integer)
@@ -31,7 +33,7 @@ defmodule Terminator.PerformersEntities do
       assoc_id: entity_id,
       abilities: abilities
     })
-    |> Terminator.Repo.insert!()
+    |> @repo.insert!()
   end
 
   def normalize_struct_name(name) do

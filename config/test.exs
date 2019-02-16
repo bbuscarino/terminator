@@ -4,6 +4,8 @@
 # the umbrella root.
 use Mix.Config
 
+config :terminator, repo: Terminator.Repo, ecto_repos: [Terminator.Repo]
+
 # Configure your database
 config :terminator, Terminator.Repo,
   username: "postgres",

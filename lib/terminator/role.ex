@@ -10,6 +10,8 @@ defmodule Terminator.Role do
 
   alias __MODULE__
 
+  @repo Application.get_env(:terminator, :repo, Terminator.Repo)
+
   @typedoc "A role struct"
   @type t :: %Role{}
 
@@ -95,7 +97,7 @@ defmodule Terminator.Role do
       changeset(role)
       |> put_change(:abilities, abilities)
 
-    changeset |> Terminator.Repo.update!()
+    changeset |> @repo.update!()
   end
 
   def grant(_, _), do: raise(ArgumentError, message: "Bad arguments for giving grant")
@@ -124,7 +126,7 @@ defmodule Terminator.Role do
       changeset(role)
       |> put_change(:abilities, abilities)
 
-    changeset |> Terminator.Repo.update!()
+    changeset |> @repo.update!()
   end
 
   def revoke(_, _), do: raise(ArgumentError, message: "Bad arguments for revoking grant")

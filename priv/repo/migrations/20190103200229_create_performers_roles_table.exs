@@ -1,12 +1,8 @@
 defmodule Terminator.Repo.Migrations.CreatePerformersRolesTable do
   use Ecto.Migration
+  import Terminator.Migrations
 
   def change do
-    create_if_not_exists table(:terminator_performers_roles) do
-      add(:performer_id, references(:terminator_performers))
-      add(:role_id, references(:terminator_roles))
-
-      timestamps()
-    end
+    performer_roles()
   end
 end

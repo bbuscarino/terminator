@@ -24,7 +24,7 @@ defmodule Terminator.Performer do
   schema "terminator_performers" do
     field(:abilities, {:array, :string}, default: [])
 
-    many_to_many(:roles, Role, join_through: PerformersRoles)
+    many_to_many(:roles, Role, join_through: PerformersRoles, on_replace: :delete)
     has_many(:entities, PerformersEntities)
 
     timestamps()
